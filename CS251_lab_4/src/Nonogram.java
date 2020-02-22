@@ -9,8 +9,8 @@ public class Nonogram {
 	public final int MAXROWGROUPS = 3;
 	public final int MAXCOLGROUPS = 3;
 
-	public int height;   // The number of rows in the puzzle.
-	public int width;    // The number of columns in the puzzle.
+	public static int height;   // The number of rows in the puzzle.
+	public static int width;    // The number of columns in the puzzle.
 	public int maxRowGroups;  // An upper bound on the number of groups in
 	// any one row.
 	public int maxColGroups;  // An upper bound on the number of groups in
@@ -24,11 +24,12 @@ public class Nonogram {
  	
 	public Nonogram(boolean[ ][ ] targetSolution) {
 		// targetSolution must be an m x n rectangular array where m,n >= 1.
-		this.height = targetSolution[0].length;
-		this.width = targetSolution[0][0].length;
+		this.height = targetSolution.length;
+		this.width = targetSolution[0].length;
 		this.maxRowGroups = MAXROWGROUPS;
 		this.maxColGroups = MAXCOLGROUPS;
-		this.guess = new boolean[height][width];
+		//this.guess = new boolean[height][width];
+		this.guess = targetSolution;
 		this.rowGroupLength = new int[MAXROWGROUPS][MAXCOLGROUPS];
 		this.colGroupLength = new int[MAXROWGROUPS][MAXCOLGROUPS];
 
@@ -58,7 +59,8 @@ public class Nonogram {
 		}
 		return rv;
 	}
-	
+
+
 	int[ ] findGroupLengths (boolean[ ] data) {
 		// figure out the groups in data, and record their
 		// lengths in rowGroupLengths and colGroupLengths
@@ -71,13 +73,17 @@ public class Nonogram {
 		for (int i = 1; i < data.length; i++) {
 			if (data[i] == data[i-1]) {
 				groupSizeCount++;
+			} else {
+				result[currentStorageIndex] = groupSizeCount;
+				currentStorageIndex++;
+				groupSizeCount = 0;
 			}
 		}
 
 		return result;
 	}
 	
-	public String toString(boolean[][] nonogram) {
+	public static String toString(boolean[][] nonogram) {
 		// print out the nonogram as a string.
 		// this should include the group lengths
 		// as well as the current guess.
@@ -89,12 +95,19 @@ public class Nonogram {
 		// and the "FULL color" (black) by the 'X' char.
 
 		// TODO: your code here:
+		String result = "";
+
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				System.out.println(nonogram[i][j]);
+				if (nonogram[i][j] == true) {
+					result += "X";
+				} else if (nonogram[i][j] == false) {
+					result += ".";
+				}
 			}
+			result += "\n";
 		}
-		
+		return result;
 	}
 	
 	boolean isGuessCorrect ( ) {
@@ -148,9 +161,11 @@ public class Nonogram {
 		
 		System.out.println(pic);
 		System.out.println();
-		System.out.println(nono);
+
+		System.out.println(toString(nono.guess));
 		
-		NonogramGUI gui = new NonogramGUI(nono);   // starts up a GUI interface for the puzzle passed to it.
+		//NonogramGUI gui = new NonogramGUI(nono);   // starts up a GUI
+		// interface for the puzzle passed to it.
 	}
 
 }
