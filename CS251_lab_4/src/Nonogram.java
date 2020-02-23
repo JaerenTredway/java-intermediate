@@ -1,3 +1,5 @@
+//import NonogramGUI.*;
+
 /**
  * CS251 Lab Section 003
  * Lab 4: Nonograms 1
@@ -6,14 +8,14 @@
  */
 public class Nonogram {
 
-	public final int MAXROWGROUPS = 3;
-	public final int MAXCOLGROUPS = 3;
+//	public final int MAXROWGROUPS = 3;
+//	public final int MAXCOLGROUPS = 3;
 
 	public static int height;   // The number of rows in the puzzle.
 	public static int width;    // The number of columns in the puzzle.
-	public int maxRowGroups;  // An upper bound on the number of groups in
+	public int maxRowGroups = 10;  // An upper bound on the number of groups in
 	// any one row.
-	public int maxColGroups;  // An upper bound on the number of groups in
+	public int maxColGroups = 10;  // An upper bound on the number of groups in
 	// any one column.
 	// Note: the above fields are used by the GUI classes, so don't eliminate them.
 	// Do ensure that they are initialized to appropriate values.
@@ -26,12 +28,12 @@ public class Nonogram {
 		// targetSolution must be an m x n rectangular array where m,n >= 1.
 		this.height = targetSolution.length;
 		this.width = targetSolution[0].length;
-		this.maxRowGroups = MAXROWGROUPS;
-		this.maxColGroups = MAXCOLGROUPS;
+		this.maxRowGroups = maxRowGroups;
+		this.maxColGroups = maxColGroups;
 		//this.guess = new boolean[height][width];
 		this.guess = targetSolution;
-		this.rowGroupLength = new int[MAXROWGROUPS][MAXCOLGROUPS];
-		this.colGroupLength = new int[MAXROWGROUPS][MAXCOLGROUPS];
+		this.rowGroupLength = new int[maxRowGroups][maxColGroups];
+		this.colGroupLength = new int[maxRowGroups][maxColGroups];
 
 
 		// TODO: Initialize the fields correctly to make a nonogram puzzle of which
