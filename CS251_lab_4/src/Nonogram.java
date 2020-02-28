@@ -149,7 +149,7 @@ public class Nonogram {
 				rowGroupLength[i][j] = temp[j];
 			}
 		}
-/*
+
 		//TODO: for each col of targetSolution, invoke findGroupLengths on it
 		// and assign values to corresponding row in colGroupLength[][]
 		//in this case, i is column:
@@ -157,7 +157,7 @@ public class Nonogram {
 
 			//first make a temporary 1D array to extract the column data:
 			boolean[] tempColArray = new boolean[height];
-			for (int j = 1; j < height; j++) {
+			for (int j = 0; j < height; j++) {
 				tempColArray[j] = targetSolution[j][i];
 			}
 
@@ -169,7 +169,6 @@ public class Nonogram {
 
 		}
 
- */
 	}//END assignGroups()
 
 	boolean isGuessCorrect ( ) {
@@ -251,10 +250,19 @@ public class Nonogram {
 			System.out.println();
 		}
 
-		System.out.println("\nTEST findGroupLengths:");
+		System.out.println("\nTEST confirm row groups with findGroupLengths:");
 		for (int i = 0; i < height; i++) {
 			System.out.println(Arrays.toString(findGroupLengths(testNono.testSolution[i], maxRowGroups)));
 		}
+
+		System.out.println("\nTEST colGroupLength: ");
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < maxColGroups; j++) {
+				System.out.print(colGroupLength[i][j] + " / ");
+			}
+			System.out.println();
+		}
+		System.out.println(pic);
 
 		//START THE GUI:
 		//NonogramGUI gui = new NonogramGUI(nono);
