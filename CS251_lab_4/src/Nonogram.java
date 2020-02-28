@@ -13,27 +13,34 @@ public class Nonogram {
 	public static int width;    		//The number of columns in the puzzle
 	public static int maxRowGroups; 	// max number of groups in any one row
 	public static int maxColGroups; 	// max number of groups in any one col
-		// Note: the above fields are used by the GUI classes
-	private boolean[][] testSolution; 	// the correct puzzle solution
-	boolean[ ][ ] guess;  				//the user's guess for a solution
+		// Note: the above fields are used by the GUI classes --^
+	private static boolean[][] targetSolution;	// the correct puzzle solution
+	static boolean[ ][ ] guess;  				//the user's guess for a
+	// solution
 	static int[ ][ ] rowGroupLength;
-		//will store the actual group sizes for each row
+		//will store the actual group sizes for each row of targetSolution
 	static int[ ][ ] colGroupLength;
-		//will store the actual group sizes for each column
+		//will store the actual group sizes for each column of targetSolution
+	static int[ ][ ] guessRowGroupLength;
+	//will store the actual group sizes for each row of guess
+	static int[ ][ ] guessColGroupLength;
+	//will store the actual group sizes for each column of guess
 
 	//2D-ARRAY-INPUT CONSTRUCTOR:
 	public Nonogram(boolean[ ][ ] targetSolution) {
 
-		this.height = 		findHeight(toString(targetSolution));
-		this.width = 		findWidth(toString(targetSolution));
-		this.maxRowGroups = (int)Math.ceil((double)height/2);
-		this.maxColGroups = (int)Math.ceil((double)width/2);
-		this.testSolution = targetSolution;
-		this.guess = 		new boolean[height][width];
-		this.rowGroupLength = new int[height][maxRowGroups];
-		this.colGroupLength = new int[width][maxColGroups];
-		//populate rowGroupLength and colGroupLength:
+		this.height = 			findHeight(toString(targetSolution));
+		this.width = 			findWidth(toString(targetSolution));
+		this.maxRowGroups = 	(int)Math.ceil((double)height/2);
+		this.maxColGroups = 	(int)Math.ceil((double)width/2);
+		this.targetSolution = 	targetSolution;
+		this.guess = 			new boolean[height][width];
+		this.rowGroupLength = 	new int[height][maxRowGroups];
+		this.colGroupLength = 	new int[width][maxColGroups];
+		//populate rowGroupLength and colGroupLength with this:
 		assignGroups(targetSolution);
+		this.guessRowGroupLength = new int[height][maxRowGroups];
+		this.guessColGroupLength = new int[width][maxColGroups];
 
 	}//END 2D-ARRAY-INPUT CONSTRUCTOR
 
@@ -68,7 +75,7 @@ public class Nonogram {
 		return result;
 	}
 
-	//convert 2D boolean array back into String:
+	//convert 2D boolean array into String:
 	public static String toString(boolean[][] nonogram) {
 		// TODO: this should include the group lengths as well as the current
 		//  guess (?)
@@ -95,7 +102,7 @@ public class Nonogram {
 		return result;
 	}
 
-	//this is provided for you, it converts a string to a 2D boolean array:
+	//convert a string into a 2D boolean array:
 	private static boolean[][] stringToBooleanArray(String s) {
 
 		String[ ] lines = s.split("\n");
@@ -111,6 +118,7 @@ public class Nonogram {
 		//rv stands for return value
 	}
 
+	//takes a 1D array corresponding to a row or a column and finds the groups:
 	private static int[ ] findGroupLengths (boolean[ ] data, int maxGroups) {
 		// figure out the groups in data, and record their
 		// lengths in rowGroupLengths and colGroupLengths
@@ -140,48 +148,79 @@ public class Nonogram {
 		return result;
 	}
 
-	private static void assignGroups (boolean[][] targetSolution) {
-		//TODO: for each row of targetSolution, invoke findGroupLengths on it
-		// and assign values to corresponding row in rowGroupLength[][]
+	//invokes findGroupLengths on each row and column of 2D array to find
+	// groups and assign them to either rowGroupLength and colGroupLength or
+	// guessRowGroupLength and guessColGroupLength. Invoke this on either
+	// targetSolution or guess:
+	private static void assignGroups (boolean[][] input2DArray) {
+
+		//this corresponds to either rowGroupLength or guessRowGroupLength:
+		int rowGroupArray[][] = new int[height][maxRowGroups];
+		//this corresponds to either colGroupLength or guessColGroupLength:
+		int colGroupArray[][] = new int[width][maxColGroups];
+
+		if (input2DArray.equals(targetSolution)) {
+			rowGroupArray = rowGroupLength;
+			colGroupArray = colGroupLength;
+		} else {
+			rowGroupArray = guessRowGroupLength;
+			colGroupArray = guessColGroupLength;
+		}
+
+		//for each row of input (targetSolution or guess), invoke
+		//findGroupLengths on it and assign values to corresponding row in
+		//rowGroupLength[][] or guessRowGroupLength[][]:
 		for (int i = 0; i < height; i++) {
-			int[] temp = findGroupLengths(targetSolution[i], maxRowGroups);
+			int[] temp = findGroupLengths(input2DArray[i], maxRowGroups);
 			for (int j = 0; j < maxRowGroups; j++) {
-				rowGroupLength[i][j] = temp[j];
+				rowGroupArray[i][j] = temp[j];
 			}
 		}
 
-		//TODO: for each col of targetSolution, invoke findGroupLengths on it
-		// and assign values to corresponding row in colGroupLength[][]
+		//for each col of input (targetSolution or guess), invoke
+		//findGroupLengths on it and assign values to corresponding row in
+		//either colGroupLength[][] or guessColGroupLength[][]:
+
 		//in this case, i is column:
 		for (int i = 0; i < width; i++) {
 
 			//first make a temporary 1D array to extract the column data:
 			boolean[] tempColArray = new boolean[height];
 			for (int j = 0; j < height; j++) {
-				tempColArray[j] = targetSolution[j][i];
+				tempColArray[j] = input2DArray[j][i];
 			}
 
-
+			//find the group lengths and assign them to the colGroupArray
+			//from either targetSolution or guess:
 			int[] temp = findGroupLengths(tempColArray, maxColGroups);
 			for (int j = 0; j < maxColGroups; j++) {
-				colGroupLength[i][j] = temp[j];
+				colGroupArray[i][j] = temp[j];
 			}
-
 		}
 
 	}//END assignGroups()
 
-	boolean isGuessCorrect ( ) {
-		// return true iff the guess has all the correct row/column
-		// group lengths.  It does not have to match the "solution" field.
-		// TODO: your code here
-
+	public static boolean isGuessCorrect () {
+		// return true if the guess has all the correct row/column
+		// group lengths.  It does not have to match the "solution" field:
 		boolean result = true;
 
-		//TODO: make a 2D for-loop that checks to see if RGL and CGL are
-		// equal between guess and targetSolution
+		for (int i = 0; i < height; i++) {
+			//check row groups:
+			for (int j = 0; j < maxRowGroups; j++) {
+				if (rowGroupLength[i][j] != guessRowGroupLength[i][j]) {
+					result = false;
+				}
+			}
 
-		return result;    // you will replace this.
+			//check col groups:
+			for (int j = 0; j < maxColGroups; j++) {
+				if (colGroupLength[i][j] != guessColGroupLength[i][j]) {
+					result = false;
+				}
+			}
+		}
+		return result;
 	}
 
 
@@ -239,7 +278,7 @@ public class Nonogram {
 
 		System.out.println("\nTEST original pic String = \n" + pic);
 
-		String testString = toString(testNono.testSolution);
+		String testString = toString(testNono.targetSolution);
 		System.out.println("\nTEST toString: \n" + testString);
 
 		System.out.println("\nTEST rowGroupLength: ");
@@ -250,9 +289,9 @@ public class Nonogram {
 			System.out.println();
 		}
 
-		System.out.println("\nTEST confirm row groups with findGroupLengths:");
+		System.out.println("\n^-- confirm row groups with findGroupLengths:");
 		for (int i = 0; i < height; i++) {
-			System.out.println(Arrays.toString(findGroupLengths(testNono.testSolution[i], maxRowGroups)));
+			System.out.println(Arrays.toString(findGroupLengths(testNono.targetSolution[i], maxRowGroups)));
 		}
 
 		System.out.println("\nTEST colGroupLength: ");
@@ -262,7 +301,54 @@ public class Nonogram {
 			}
 			System.out.println();
 		}
+		System.out.println("\n^-- check column groups against nonogram:");
 		System.out.println(pic);
+
+		System.out.println("\nTEST guess vs. targetSolution: ");
+		//INCORRECT GUESS TEST: **********************************************
+		//build an incorrect guess to test:
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				testNono.guess[i][j] = true;
+			}
+		}
+		//assign values to guessRowGroupLength[][] and guessColGroupLength[][]:
+		assignGroups(guess);
+		//print out the guess's row groups:
+		System.out.println("TEST 1: your guess's row groups:");
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < maxRowGroups; j++) {
+				System.out.print(guessRowGroupLength[i][j] + " / ");
+			}
+			System.out.println();
+		}
+
+		System.out.println("TEST isGuessCorrect: ");
+		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
+				"solution yet.");
+
+		//CORRECT GUESS TEST: ************************************************
+		//build a correct guess to test:
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				testNono.guess[i][j] = testNono.targetSolution[i][j];
+			}
+		}
+		//assign values to guessRowGroupLength[][] and guessColGroupLength[][]:
+		assignGroups(guess);
+		//print out the guess's row groups:
+		System.out.println("\n\nTEST 2: your guess's row groups:");
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < maxRowGroups; j++) {
+				System.out.print(guessRowGroupLength[i][j] + " / ");
+			}
+			System.out.println();
+		}
+
+		System.out.println("TEST isGuessCorrect: ");
+		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
+				"solution yet.");
+
 
 		//START THE GUI:
 		//NonogramGUI gui = new NonogramGUI(nono);
