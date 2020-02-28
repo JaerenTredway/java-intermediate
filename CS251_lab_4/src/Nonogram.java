@@ -14,9 +14,8 @@ public class Nonogram {
 	public static int maxRowGroups; 	// max number of groups in any one row
 	public static int maxColGroups; 	// max number of groups in any one col
 		// Note: the above fields are used by the GUI classes --^
-	private static boolean[][] targetSolution;	// the correct puzzle solution
-	static boolean[ ][ ] guess;  				//the user's guess for a
-	// solution
+    static boolean[][] targetSolution;	// the correct puzzle solution
+	static boolean[ ][ ] guess;  	    //the user's guess for a solution
 	static int[ ][ ] rowGroupLength;
 		//will store the actual group sizes for each row of targetSolution
 	static int[ ][ ] colGroupLength;
@@ -200,6 +199,7 @@ public class Nonogram {
 
 	}//END assignGroups()
 
+    //checks group lengths of guess vs. targetSolution to see if they match:
 	public static boolean isGuessCorrect () {
 		// return true if the guess has all the correct row/column
 		// group lengths.  It does not have to match the "solution" field:
@@ -262,7 +262,7 @@ public class Nonogram {
 	//****************END GUI section ***************************************
 
 
-	//MAIN METHOD used for testing:
+	//MAIN METHOD used for testing: *****************************************
 	public static void main(String[] args) {
 
 		//MAKE A NONOGRAM FROM A STRING:
@@ -326,6 +326,7 @@ public class Nonogram {
 		System.out.println("TEST isGuessCorrect: ");
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
+		//END incorrect guess test *******************************************
 
 		//CORRECT GUESS TEST: ************************************************
 		//build a correct guess to test:
@@ -348,10 +349,10 @@ public class Nonogram {
 		System.out.println("TEST isGuessCorrect: ");
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
-
+        //END correct guess test ********************************************
 
 		//START THE GUI:
-		//NonogramGUI gui = new NonogramGUI(nono);
+		NonogramGUI gui = new NonogramGUI(testNono);
 			//interface for the puzzle passed to it
 
 	}//END main() method
