@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class Nonogram {
 
 	//MEMBER VARIABLES:
+	//***NOTE: for production they are static, to allow testing in main()***
 	public static int height;   		//The number of rows in the puzzle
 	public static int width;    		//The number of columns in the puzzle
 	public static int maxRowGroups; 	// max number of groups in any one row
@@ -26,6 +27,12 @@ public class Nonogram {
 	static int[ ][ ] guessRowGroupLength;
 	//this will store the actual group sizes for each column of guess:
 	static int[ ][ ] guessColGroupLength;
+	boolean[][] mousePressAt;	//records index where mouse is pressed
+	boolean[][] mouseReleaseAt;	//records index where mouse is released
+	int pressedRow;				//the row where mouse was pressed
+	int pressedCol;				//the col where mouse was pressed
+	int releasedRow;			//the row where mouse was released
+	int releasedCol;			//the col where mouse was released
 
 
 	//2D-ARRAY-INPUT CONSTRUCTOR:
@@ -36,13 +43,20 @@ public class Nonogram {
 		this.maxRowGroups = 	(int)Math.ceil((double)height/2);
 		this.maxColGroups = 	(int)Math.ceil((double)width/2);
 		this.targetSolution = 	targetSolution;
-		this.guess = 			new boolean[height][width];
+		this.guess = 			targetSolution;
+			// ^--after GUI is operational, set to: new boolean[height][width];
 		this.rowGroupLength = 	new int[height][maxRowGroups];
 		this.colGroupLength = 	new int[width][maxColGroups];
 		//populate rowGroupLength and colGroupLength with this:
 		assignGroups(targetSolution);
 		this.guessRowGroupLength = new int[height][maxRowGroups];
 		this.guessColGroupLength = new int[width][maxColGroups];
+		this.mousePressAt = new boolean[height][width];
+		this.mouseReleaseAt = new boolean[height][width];
+		pressedRow = 0;
+		pressedCol = 0;
+		releasedRow = 0;
+		releasedCol = 0;
 
 	}//END 2D-ARRAY-INPUT CONSTRUCTOR
 
@@ -228,41 +242,91 @@ public class Nonogram {
 
 
     //****************GUI methods: *****************************************
-
     // The next 4 methods are callback methods that will be invoked by the
-	// GUI when appropriate.You need to fill them in to provide the correct
-	// functionality:
+	// GUI when appropriate:
+
+	//switch the paint on the clicked cell:
 	public void handleMouseClickAt(int i, int j) {
-		// Add code here to handle a "mouseClick" event at row i, column j.
-		// You should toggle the guessed color for the cell at the clicked location.
-		// You will need to handle the possibility that (i,j) is out of bounds (negative or too big).
-		// TODO: your code here
 
+		try {
+			if (i < height && j < width) {
+				guess[i][j] = !guess[i][j];
+			}
+		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_1) {
+			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
+		}
 	}
-	
+
+	//records location of mouse press in pressedRow and pressedCol:
 	public void handleMousePressAt(int i, int j) {
-		// Add code here to handle a "mousePress" event at row i, column j.
-		// You should record the location of the press in an instance variable.
-		// Don't display anything until the mouse is released.
-		// You will need to handle the possibility that (i,j) is out of bounds (negative or too big).
-
-
+		try {
+			if (i < height && j < width) {
+				mousePressAt[i][j] = guess[i][j];
+				pressedRow = i;
+				pressedCol = j;
+				System.out.println("pressed cell was " + mousePressAt[i][j]);
+			}
+		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_2) {
+			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
+		}
 	}
 
+	//records location of mouse release in releaseRow and releaseCol, and
+	// switches the paint on that cell and all cells between press and
+	// release (if they're in the same row or same column):
 	public void handleMouseReleaseAt(int i, int j) {
-		// Add code here to handle a "mouseRelease" event at row i, column j.
-		// If there was a previous mousePress event, you should now check whether the "release" cell is
-		// in the same row or column as the "press" cell.  If it is, you should flip the color of the 
-		// "press" cell, and color all the other cells between the "press" and "release" cells to match.
-		// You will need to handle the possibility that (i,j) is out of bounds (negative or too big).
-		// TODO: your code here
+		//assign values to variables:
+		try {
+			if (i < height && j < width) {
+				mouseReleaseAt[i][j] = guess[i][j];
+				releasedRow = i;
+				releasedCol = j;
+				System.out.println("released cell was = " + mouseReleaseAt[i][j]);
+				System.out.println("mouse released at: " + releasedRow +
+						", " + releasedCol);
+			}
+		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_3) {
+			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
+		}
 
-	}
+		//for press and release in same row: ********************************
+		if (releasedRow == pressedRow) {
+			if (releasedCol > pressedCol) {
+				int stripeLength = releasedCol - pressedCol + 1;
+				for (int k = releasedCol; k > releasedCol - stripeLength; k--) {
+					guess[pressedRow][k] = !guess[pressedRow][k];
+				}
+			}//done
 
+			if (releasedCol < pressedCol) {
+				int stripeLength = pressedCol - releasedCol + 1;
+				for (int k = pressedCol; k > pressedCol - stripeLength; k--) {
+					guess[pressedRow][k] = !guess[pressedRow][k];
+				}
+			}//done
+		}//END same row
+
+		//for press and release in same col: ********************************
+		if (releasedCol == pressedCol) {
+			if (releasedRow > pressedRow) {
+				int stripeLength = releasedRow - pressedRow + 1;
+
+			}
+
+			if (releasedRow < pressedRow) {
+				int stripeLength = pressedRow - releasedRow + 1;
+
+			}
+		}//END same col
+	}//END handleMouseReleaseAt()
+
+	//resets the painted cells to blank when reset button clicked:
 	public void handleResetButtonClick( ) {
-		// Add code to handle a click of the "reset" button.
-		// You should reset all cells to be empty (white) again.
-		// TODO: your code here
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				guess[i][j] = false;
+			}
+		}
 	}
 	//****************END GUI section ***************************************
 
@@ -320,7 +384,7 @@ public class Nonogram {
 		}
 		System.out.println("\n^-- check column groups against nonogram:");
 		System.out.println(pic);
-
+/*
 		System.out.println("\nTEST guess vs. targetSolution: ");
 		//INCORRECT GUESS TEST: **********************************************
 		//build an incorrect guess to test:
@@ -367,7 +431,7 @@ public class Nonogram {
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
         //END correct guess test ********************************************
-
+*/
 		//START THE GUI:
 		//user interface for the puzzle solution passed into it:
 		NonogramGUI gui = new NonogramGUI(testNono);
