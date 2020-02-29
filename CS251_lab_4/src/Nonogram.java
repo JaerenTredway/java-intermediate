@@ -16,14 +16,15 @@ public class Nonogram {
 		// Note: the above fields are used by the GUI classes --^
     static boolean[][] targetSolution;	// the correct puzzle solution
 	static boolean[ ][ ] guess;  	    //the user's guess for a solution
+	//this will store the actual group sizes for each row of targetSolution:
 	static int[ ][ ] rowGroupLength;
-		//will store the actual group sizes for each row of targetSolution
+	//this will store the actual group sizes for each column of targetSolution:
 	static int[ ][ ] colGroupLength;
-		//will store the actual group sizes for each column of targetSolution
+	//this will store the actual group sizes for each row of guess:
 	static int[ ][ ] guessRowGroupLength;
-	//will store the actual group sizes for each row of guess
+	//this will store the actual group sizes for each column of guess:
 	static int[ ][ ] guessColGroupLength;
-	//will store the actual group sizes for each column of guess
+
 
 	//2D-ARRAY-INPUT CONSTRUCTOR:
 	public Nonogram(boolean[ ][ ] targetSolution) {
@@ -117,7 +118,7 @@ public class Nonogram {
 		//rv stands for return value
 	}
 
-	//takes a 1D array corresponding to a row or a column and finds the groups:
+	//makes a 1D array corresponding to a row or a column and finds the groups:
 	private static int[ ] findGroupLengths (boolean[ ] data, int maxGroups) {
 		// figure out the groups in data, and record their
 		// lengths in rowGroupLengths and colGroupLengths
@@ -148,9 +149,9 @@ public class Nonogram {
 	}
 
 	//invokes findGroupLengths on each row and column of 2D array to find
-	// groups and assign them to either rowGroupLength and colGroupLength or
-	// guessRowGroupLength and guessColGroupLength. Invoke this on either
-	// targetSolution or guess:
+	//groups and assign them to either 1) rowGroupLength and colGroupLength, or
+	// 2) guessRowGroupLength and guessColGroupLength. Invoke this on either
+	//targetSolution or guess:
 	private static void assignGroups (boolean[][] input2DArray) {
 
 		//this corresponds to either rowGroupLength or guessRowGroupLength:
@@ -352,8 +353,8 @@ public class Nonogram {
         //END correct guess test ********************************************
 
 		//START THE GUI:
+		//user interface for the puzzle solution passed into it:
 		NonogramGUI gui = new NonogramGUI(testNono);
-			//interface for the puzzle passed to it
 
 	}//END main() method
 }//END class Nonogram
