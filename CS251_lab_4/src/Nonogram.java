@@ -11,22 +11,22 @@ import java.util.Arrays;
 public class Nonogram {
 
 	//MEMBER VARIABLES:
-	//***NOTE: for production they are static, to allow testing in main()***
+	//***NOTE: for production these are static, to allow testing in main()***
+	//***and to show results in the terminal via the main() *****************
 	public static int height;   		//The number of rows in the puzzle
 	public static int width;    		//The number of columns in the puzzle
 	public static int maxRowGroups; 	// max number of groups in any one row
 	public static int maxColGroups; 	// max number of groups in any one col
-		// Note: the above fields are used by the GUI classes --^
     static boolean[][] targetSolution;	// the correct puzzle solution
-	static boolean[ ][ ] guess;  	    //the user's guess for a solution
+	static boolean[][] guess;  	    	//the user's guess for a solution
 	//this will store the actual group sizes for each row of targetSolution:
-	static int[ ][ ] rowGroupLength;
+	static int[][] rowGroupLength;
 	//this will store the actual group sizes for each column of targetSolution:
-	static int[ ][ ] colGroupLength;
+	static int[][] colGroupLength;
 	//this will store the actual group sizes for each row of guess:
-	static int[ ][ ] guessRowGroupLength;
+	static int[][] guessRowGroupLength;
 	//this will store the actual group sizes for each column of guess:
-	static int[ ][ ] guessColGroupLength;
+	static int[][] guessColGroupLength;
 	boolean[][] mousePressAt;	//records index where mouse is pressed
 	boolean[][] mouseReleaseAt;	//records index where mouse is released
 	int pressedRow;				//the row where mouse was pressed
@@ -43,8 +43,7 @@ public class Nonogram {
 		this.maxRowGroups = 	(int)Math.ceil((double)height/2);
 		this.maxColGroups = 	(int)Math.ceil((double)width/2);
 		this.targetSolution = 	targetSolution;
-		this.guess = 			targetSolution;
-			// ^--after GUI is operational, set to: new boolean[height][width];
+		this.guess = 			new boolean[height][width];
 		this.rowGroupLength = 	new int[height][maxRowGroups];
 		this.colGroupLength = 	new int[width][maxColGroups];
 		//populate rowGroupLength and colGroupLength with this:
@@ -143,10 +142,11 @@ public class Nonogram {
 		int currentStorageIndex = 0;
 
 		for (int i = 0; i < data.length; i++) {
-			//if you find a painted cell, add 1 to group size:
+			//if you find a painted (true) cell, add 1 to group size:
 			if (data[i] == true) {
 				groupSizeCount++;
-			//if you don't find a painted cell, report current group size and
+			//if you don't find a painted (true) cell, report current group size
+				// and
 				// reset group size to zero, and increment storage index:
 			} else {
 				if (groupSizeCount > 0) {
@@ -168,7 +168,7 @@ public class Nonogram {
 	//groups and assign them to either 1) rowGroupLength and colGroupLength, or
 	// 2) guessRowGroupLength and guessColGroupLength. Invoke this on either
 	//targetSolution or guess:
-	private static void assignGroups (boolean[][] input2DArray) {
+	public static void assignGroups (boolean[][] input2DArray) {
 
 		//this corresponds to either rowGroupLength or guessRowGroupLength:
 		int rowGroupArray[][] = new int[height][maxRowGroups];
@@ -221,12 +221,16 @@ public class Nonogram {
 		// return true if the guess has all the correct row/column
 		// group lengths.  It does not have to match the "solution" field:
 		boolean result = true;
+		String rowReport = "";
+		String colReport = "";
 
 		for (int i = 0; i < height; i++) {
 			//check row groups:
 			for (int j = 0; j < maxRowGroups; j++) {
 				if (rowGroupLength[i][j] != guessRowGroupLength[i][j]) {
 					result = false;
+					rowReport = "You're guess's row groups don't " +
+							"match the puzzle";
 				}
 			}
 
@@ -234,12 +238,30 @@ public class Nonogram {
 			for (int j = 0; j < maxColGroups; j++) {
 				if (colGroupLength[i][j] != guessColGroupLength[i][j]) {
 					result = false;
+					colReport = "You're guess's column groups don't " +
+							"match the puzzle";
 				}
 			}
 		}
+
+		System.out.println(rowReport);
+		System.out.println(colReport);
 		return result;
+	}//END isGuessCorrect()
+
+	//resets the guess to blank:
+	public static void resetGuess () {
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				guess[i][j] = false;
+			}
+		}
 	}
 
+	//print out a 2D array:
+	public static void print2DArray (boolean[][] inputArray) {
+		System.out.println(toString(inputArray));
+	}
 
     //****************GUI methods: *****************************************
     // The next 4 methods are callback methods that will be invoked by the
@@ -257,21 +279,20 @@ public class Nonogram {
 		}
 	}
 
-	//records location of mouse press in pressedRow and pressedCol:
+	//records the location of mouse press in pressedRow and pressedCol:
 	public void handleMousePressAt(int i, int j) {
 		try {
 			if (i < height && j < width) {
 				mousePressAt[i][j] = guess[i][j];
 				pressedRow = i;
 				pressedCol = j;
-				System.out.println("pressed cell was " + mousePressAt[i][j]);
 			}
 		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_2) {
 			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
 		}
 	}
 
-	//records location of mouse release in releaseRow and releaseCol, and
+	//records the location of mouse release in releaseRow and releaseCol, and
 	// switches the paint on that cell and all cells between press and
 	// release (if they're in the same row or same column):
 	public void handleMouseReleaseAt(int i, int j) {
@@ -281,9 +302,6 @@ public class Nonogram {
 				mouseReleaseAt[i][j] = guess[i][j];
 				releasedRow = i;
 				releasedCol = j;
-				System.out.println("released cell was = " + mouseReleaseAt[i][j]);
-				System.out.println("mouse released at: " + releasedRow +
-						", " + releasedCol);
 			}
 		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_3) {
 			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
@@ -296,26 +314,30 @@ public class Nonogram {
 				for (int k = releasedCol; k > releasedCol - stripeLength; k--) {
 					guess[pressedRow][k] = !guess[pressedRow][k];
 				}
-			}//done
+			}
 
 			if (releasedCol < pressedCol) {
 				int stripeLength = pressedCol - releasedCol + 1;
 				for (int k = pressedCol; k > pressedCol - stripeLength; k--) {
 					guess[pressedRow][k] = !guess[pressedRow][k];
 				}
-			}//done
+			}
 		}//END same row
 
 		//for press and release in same col: ********************************
 		if (releasedCol == pressedCol) {
 			if (releasedRow > pressedRow) {
 				int stripeLength = releasedRow - pressedRow + 1;
-
+				for (int k = releasedRow; k > releasedRow - stripeLength; k--) {
+					guess[k][pressedCol] = !guess[k][pressedCol];
+				}
 			}
 
 			if (releasedRow < pressedRow) {
 				int stripeLength = pressedRow - releasedRow + 1;
-
+				for (int k = pressedRow; k > pressedRow - stripeLength; k--) {
+					guess[k][pressedCol] = !guess[k][pressedCol];
+				}
 			}
 		}//END same col
 	}//END handleMouseReleaseAt()
@@ -335,7 +357,7 @@ public class Nonogram {
 	public static void main(String[] args) {
 
 		//MAKE A NONOGRAM FROM A STRING:
-		String pic =    "......X.XX\n" +
+	/*	String pic =    "......X.XX\n" +
                         "........XX\n" +
                         ".......X..\n" +
                         ".........X\n" +
@@ -345,8 +367,8 @@ public class Nonogram {
                         ".XXXXXXXX.\n" +
                         "....X..X..\n" +
                         "...XX.XX..\n";
-
-        //String pic = "XX...X\n.X.XXX\n.X.XX.\n.XXX..\n.XXXX.\n...X..";
+	*/
+        String pic = "XX...X\n.X.XXX\n.X.XX.\n.XXX..\n.XXXX.\n...X..";
 
 		Nonogram testNono = new Nonogram(pic);
 
@@ -356,11 +378,11 @@ public class Nonogram {
 		System.out.println("maxColGroups = " + maxColGroups);
 		System.out.println("maxRowGroups = " + maxRowGroups);
 
-		System.out.println("\nTEST original pic String = \n" + pic);
+/*		System.out.println("\nTEST original pic String = \n" + pic);
 
 		String testString = toString(testNono.targetSolution);
 		System.out.println("\nTEST toString: \n" + testString);
-
+*/
 		System.out.println("\nTEST rowGroupLength: ");
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < maxRowGroups; j++) {
@@ -369,12 +391,12 @@ public class Nonogram {
 			System.out.println();
 		}
 
-		System.out.println("\n^-- confirm row groups with findGroupLengths:");
+/*		System.out.println("\n^-- confirm row groups with findGroupLengths:");
 		for (int i = 0; i < height; i++) {
 			System.out.println(Arrays.toString(findGroupLengths(testNono
                     .targetSolution[i], maxRowGroups)));
 		}
-
+*/
 		System.out.println("\nTEST colGroupLength: ");
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < maxColGroups; j++) {
@@ -382,9 +404,9 @@ public class Nonogram {
 			}
 			System.out.println();
 		}
-		System.out.println("\n^-- check column groups against nonogram:");
+/*		System.out.println("\n^-- check column groups against nonogram:");
 		System.out.println(pic);
-/*
+*/
 		System.out.println("\nTEST guess vs. targetSolution: ");
 		//INCORRECT GUESS TEST: **********************************************
 		//build an incorrect guess to test:
@@ -404,22 +426,25 @@ public class Nonogram {
 			System.out.println();
 		}
 
-		System.out.println("TEST isGuessCorrect: ");
+		//System.out.println("TEST isGuessCorrect: ");
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
 		//END incorrect guess test *******************************************
 
 		//CORRECT GUESS TEST: ************************************************
 		//build a correct guess to test:
+		resetGuess();
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				testNono.guess[i][j] = testNono.targetSolution[i][j];
+				guess[i][j] = targetSolution[i][j];
 			}
 		}
+
 		//assign values to guessRowGroupLength[][] and guessColGroupLength[][]:
 		assignGroups(guess);
+
 		//print out the guess's row groups:
-		System.out.println("\n\nTEST 2: your guess's row groups:");
+		System.out.println("\nTEST 2: your guess's row groups:");
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < maxRowGroups; j++) {
 				System.out.print(guessRowGroupLength[i][j] + " / ");
@@ -427,16 +452,15 @@ public class Nonogram {
 			System.out.println();
 		}
 
-		System.out.println("TEST isGuessCorrect: ");
+		//System.out.println("TEST isGuessCorrect: ");
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
         //END correct guess test ********************************************
-*/
+
 		//START THE GUI:
 		//user interface for the puzzle solution passed into it:
 		NonogramGUI gui = new NonogramGUI(testNono);
 
 	}//END main() method
-
 
 }//END class Nonogram
