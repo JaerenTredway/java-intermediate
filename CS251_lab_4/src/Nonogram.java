@@ -1,3 +1,5 @@
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Arrays;
 
 /**
@@ -225,9 +227,11 @@ public class Nonogram {
 	}
 
 
-	//****************GUI interaction methods: *****************************
-	// The next 4 methods are callback methods that will be invoked by the GUI when appropriate.
-	// You need to fill them in to provide the correct functionality.
+    //****************GUI methods: *****************************************
+
+    // The next 4 methods are callback methods that will be invoked by the
+	// GUI when appropriate.You need to fill them in to provide the correct
+	// functionality:
 	public void handleMouseClickAt(int i, int j) {
 		// Add code here to handle a "mouseClick" event at row i, column j.
 		// You should toggle the guessed color for the cell at the clicked location.
@@ -241,7 +245,7 @@ public class Nonogram {
 		// You should record the location of the press in an instance variable.
 		// Don't display anything until the mouse is released.
 		// You will need to handle the possibility that (i,j) is out of bounds (negative or too big).
-		// TODO: your code here
+
 
 	}
 
@@ -267,8 +271,19 @@ public class Nonogram {
 	public static void main(String[] args) {
 
 		//MAKE A NONOGRAM FROM A STRING:
-		String pic = "..XXX..\n.XX.XX.\nXX...XX\nX.....X\nXX...XX\n.XX.XX.\n." +
-				".XXXX.";
+		String pic =    "......X.XX\n" +
+                        "........XX\n" +
+                        ".......X..\n" +
+                        ".........X\n" +
+                        ".....XX...\n" +
+                        "XX..XXXX..\n" +
+                        "XX.XXXXXX.\n" +
+                        ".XXXXXXXX.\n" +
+                        "....X..X..\n" +
+                        "...XX.XX..\n";
+
+        //String pic = "XX...X\n.X.XXX\n.X.XX.\n.XXX..\n.XXXX.\n...X..";
+
 		Nonogram testNono = new Nonogram(pic);
 
 		//TEST THE MEMBER VARIABLES FOR CORRECT VALUES:
@@ -292,7 +307,8 @@ public class Nonogram {
 
 		System.out.println("\n^-- confirm row groups with findGroupLengths:");
 		for (int i = 0; i < height; i++) {
-			System.out.println(Arrays.toString(findGroupLengths(testNono.targetSolution[i], maxRowGroups)));
+			System.out.println(Arrays.toString(findGroupLengths(testNono
+                    .targetSolution[i], maxRowGroups)));
 		}
 
 		System.out.println("\nTEST colGroupLength: ");
@@ -357,4 +373,6 @@ public class Nonogram {
 		NonogramGUI gui = new NonogramGUI(testNono);
 
 	}//END main() method
+
+
 }//END class Nonogram
