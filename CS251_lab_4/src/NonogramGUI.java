@@ -11,7 +11,7 @@ public class NonogramGUI implements ActionListener {
 	public NonogramGUI(Nonogram puzzle) {
 		this.puzzle = puzzle;
 		this.panel = new NonogramPanel(puzzle);;
-		JFrame f = new JFrame("Jaeren's Nonogram App");
+		JFrame f = new JFrame("JAEREN'S NONOGRAM APP");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container p = f.getContentPane();
 
@@ -37,10 +37,11 @@ public class NonogramGUI implements ActionListener {
         panel.repaint();
     }
 
+    //FIXME: needs to recognize submit button vs. reset button
     // handle submit button click event:
-  /*  public void actionPerformed(ActionEvent e) {
-        System.out.println("Reset button pressed.");
-        puzzle.handleResetButtonClick();
+ /*   public void actionPerformed(ActionEvent e) {
+        System.out.println("Submit button pressed.");
+        puzzle.handleSubmitButtonClick();
         panel.repaint();
     }
 */

@@ -268,21 +268,25 @@ public class Nonogram {
 	// GUI when appropriate:
 
 	//switch the paint on the clicked cell:
+	//FIXME: warning: don't use this method, as it's execution will be
+	// reversed by (mousePress + mouseRelease) in same cell. Wicked bug of doom.
 	public void handleMouseClickAt(int i, int j) {
 
-		try {
-			if (i < height && j < width) {
+/*		try {
+			if (i < height && i >= 0 && j < width && j >= 0) {
 				guess[i][j] = !guess[i][j];
 			}
 		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_1) {
 			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
 		}
+*/
 	}
 
 	//records the location of mouse press in pressedRow and pressedCol:
 	public void handleMousePressAt(int i, int j) {
+		//i is the y-value, j is the x-value
 		try {
-			if (i < height && j < width) {
+			if (i < height && i >= 0 && j < width && j >= 0) {
 				mousePressAt[i][j] = guess[i][j];
 				pressedRow = i;
 				pressedCol = j;
@@ -296,7 +300,8 @@ public class Nonogram {
 	// switches the paint on that cell and all cells between press and
 	// release (if they're in the same row or same column):
 	public void handleMouseReleaseAt(int i, int j) {
-		//assign values to variables:
+
+		//assign values to variables: **************************************
 		try {
 			if (i < height && j < width) {
 				mouseReleaseAt[i][j] = guess[i][j];
@@ -307,7 +312,12 @@ public class Nonogram {
 			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
 		}
 
-		//for press and release in same row: ********************************
+		//for press and release in SAME CELL: *******************************
+		if (pressedRow == releasedRow && pressedCol == releasedCol) {
+			guess[i][j] = !guess[i][j];
+		}
+
+		//for press and release in SAME ROW: ********************************
 		if (releasedRow == pressedRow) {
 			if (releasedCol > pressedCol) {
 				int stripeLength = releasedCol - pressedCol + 1;
@@ -324,7 +334,7 @@ public class Nonogram {
 			}
 		}//END same row
 
-		//for press and release in same col: ********************************
+		//for press and release in SAME COL: ********************************
 		if (releasedCol == pressedCol) {
 			if (releasedRow > pressedRow) {
 				int stripeLength = releasedRow - pressedRow + 1;
@@ -340,6 +350,11 @@ public class Nonogram {
 				}
 			}
 		}//END same col
+
+		//check for WINNING CONDITION: **************************************
+		assignGroups(guess);
+		System.out.println(isGuessCorrect() ? "*****You have a CORRECT " +
+				"SOLUTION!*****" : "keep trying...");
 	}//END handleMouseReleaseAt()
 
 	//resets the painted cells to blank when reset button clicked:
@@ -350,6 +365,15 @@ public class Nonogram {
 			}
 		}
 	}
+
+	//TODO: needs the NonogramPanel submit-button code set up
+	//checks for a winning solution when the submit button is clicked:
+	public void handleSubmitButtonClick( ) {
+		assignGroups(guess);
+		System.out.println(isGuessCorrect() ? "YOU WIN!" : "Keep " +
+						"trying...");
+	}
+
 	//****************END GUI section **************************************
 
 

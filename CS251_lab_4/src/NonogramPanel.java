@@ -103,9 +103,11 @@ public class NonogramPanel extends JPanel implements MouseListener {
         double height = getHeight();
         int xCount = (int)(x*totalCols/width);
         int yCount = (int)(y*totalRows/height);
+        //tried getting rid of the -1 on both of these:
         xCount = xCount - 1 - puzzle.maxRowGroups;
         yCount = yCount - 1 - puzzle.maxColGroups;
-        System.out.println("mousePress: "+xCount+","+yCount);
+
+        System.out.println("\nmousePress: "+xCount+","+yCount);
         puzzle.handleMousePressAt(yCount, xCount);
         repaint();
     }
