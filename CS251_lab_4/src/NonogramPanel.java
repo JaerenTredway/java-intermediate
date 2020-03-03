@@ -13,7 +13,7 @@ public class NonogramPanel extends JPanel implements MouseListener {
 	}
 	
     public Dimension getPreferredSize() {
-        return new Dimension(250,200);
+        return new Dimension(700,700);
     }
 
     public void paintComponent(Graphics g) {

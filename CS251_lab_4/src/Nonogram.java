@@ -11,8 +11,8 @@ import java.util.Arrays;
 public class Nonogram {
 
 	//MEMBER VARIABLES:
-	//***NOTE: for production these are static, to allow testing in main()***
-	//***and to show results in the terminal via the main() *****************
+	//FIXME: for production these are static, to allow testing in main()
+	//FIXME: and to show results in the terminal via main()
 	public static int height;   		//The number of rows in the puzzle
 	public static int width;    		//The number of columns in the puzzle
 	public static int maxRowGroups; 	// max number of groups in any one row
@@ -268,8 +268,8 @@ public class Nonogram {
 	// GUI when appropriate:
 
 	//switch the paint on the clicked cell:
-	//FIXME: warning: don't use this method, as it's execution will be
-	// reversed by (mousePress + mouseRelease) in same cell. Wicked bug of doom.
+	//TODO: warning: don't use this method, as it's execution will be
+	// reversed by (mousePress + mouseRelease) in same cell. Wicked bug.
 	public void handleMouseClickAt(int i, int j) {
 
 /*		try {
@@ -319,6 +319,20 @@ public class Nonogram {
 			guess[i][j] = !guess[i][j];
 		}
 
+		//FIXME: add error handling for clicks off board like this:
+/*		try {
+			if (pressedRow == releasedRow
+					&& pressedCol == releasedCol
+					&& i < height && i >= 0
+					&& j < width && j >= 0) {
+				guess[i][j] = !guess[i][j];
+			}
+		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_4) {
+			throw new ArrayIndexOutOfBoundsException("\nClick was not on " +
+					"board.");
+		}
+*/
+
 		//for press and release in SAME ROW: ********************************
 		if (releasedRow == pressedRow) {
 			if (releasedCol > pressedCol) {
@@ -356,8 +370,8 @@ public class Nonogram {
 		//check for WINNING CONDITION at each mouse release: ****************
 		//NOTE: this has been replaced with the GUI submit button:
         assignGroups(guess);
-		System.out.println(isGuessCorrect() ? "This is a CORRECT " +
-				"SOLUTION!" : "keep trying...");
+		System.out.println(isGuessCorrect() ? "This is a correct " +
+				"solution" : "This is not a correct solution");
 	}//END handleMouseReleaseAt()
 
 	//resets the painted cells to blank when reset button clicked:
@@ -369,11 +383,10 @@ public class Nonogram {
 		}
 	}
 
-	//TODO: needs the NonogramPanel submit-button code set up
 	//checks for a winning solution when the submit button is clicked:
 	public void handleSubmitButtonClick( ) {
 		assignGroups(guess);
-        System.out.println("\nSubmission being analyzed:");
+        System.out.println("Submission being analyzed:");
 		System.out.println(isGuessCorrect() ?
                 "You're guess is a match, YOU WIN!" :
                 "Keep trying...");

@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 
 public class NonogramGUI implements ActionListener {
 
@@ -48,12 +49,28 @@ public class NonogramGUI implements ActionListener {
 			System.out.println("Submit button pressed.");
 			puzzle.handleSubmitButtonClick();
 			panel.repaint();
+
+			//change modal (alert, pop-up) features:
+			UIManager UI = new UIManager();
+			UI.put("OptionPane.messageFont", new Font("Courier",
+					Font.CENTER_BASELINE, 28));
+			UI.put("OptionPane.messageForeground",
+					new Color(2,210,5));
+			UI.put("OptionPane.background",new ColorUIResource(10,50,0));
+			UI.put("Panel.background",new ColorUIResource(10,50,0));
+			UI.put("Button.background", Color.gray);
+
 			//if guess is correct, display winning message pop-up:
 			if (puzzle.isGuessCorrect()) {
 				JOptionPane.showMessageDialog(
 						null,
-						"YOU WIN!",
-						"Message", JOptionPane.PLAIN_MESSAGE);
+						"You have a correct solution,\n\n\nYOU WIN!",
+						"Your Guess Results:", JOptionPane.PLAIN_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(
+						null,
+						"Not a solution,\n\ntry again...",
+						"Your Guess Results:", JOptionPane.WARNING_MESSAGE);
 			}
 		}
 	}//END actionPerformed()
