@@ -11,8 +11,8 @@ import java.util.Arrays;
 public class Nonogram {
 
 	//MEMBER VARIABLES:
-	//FIXME: for production these are static, to allow testing in main()
-	//FIXME: and to show results in the terminal via main()
+	//NOTE: These are static to allow testing in main() and to show results
+    // in the terminal via main()
 	public static int height;   		//The number of rows in the puzzle
 	public static int width;    		//The number of columns in the puzzle
 	public static int maxRowGroups; 	// max number of groups in any one row
@@ -268,18 +268,10 @@ public class Nonogram {
 	// GUI when appropriate:
 
 	//switch the paint on the clicked cell:
-	//TODO: warning: don't use this method, as it's execution will be
+	//WARNING: don't use this method, as it's execution will be
 	// reversed by (mousePress + mouseRelease) in same cell. Wicked bug.
 	public void handleMouseClickAt(int i, int j) {
 
-/*		try {
-			if (i < height && i >= 0 && j < width && j >= 0) {
-				guess[i][j] = !guess[i][j];
-			}
-		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_1) {
-			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
-		}
-*/
 	}
 
 	//records the location of mouse press in pressedRow and pressedCol:
@@ -291,7 +283,7 @@ public class Nonogram {
 				pressedRow = i;
 				pressedCol = j;
 			}
-		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_2) {
+		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_1) {
 			throw new ArrayIndexOutOfBoundsException("\nClick was not on " +
                     "board.");
 		}
@@ -309,7 +301,7 @@ public class Nonogram {
 				releasedRow = i;
 				releasedCol = j;
 			}
-		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_3) {
+		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_2) {
 			throw new ArrayIndexOutOfBoundsException("\nClick was not on " +
                     "board.");
 		}
@@ -318,20 +310,6 @@ public class Nonogram {
 		if (pressedRow == releasedRow && pressedCol == releasedCol) {
 			guess[i][j] = !guess[i][j];
 		}
-
-		//FIXME: add error handling for clicks off board like this:
-/*		try {
-			if (pressedRow == releasedRow
-					&& pressedCol == releasedCol
-					&& i < height && i >= 0
-					&& j < width && j >= 0) {
-				guess[i][j] = !guess[i][j];
-			}
-		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_4) {
-			throw new ArrayIndexOutOfBoundsException("\nClick was not on " +
-					"board.");
-		}
-*/
 
 		//for press and release in SAME ROW: ********************************
 		if (releasedRow == pressedRow) {
@@ -368,7 +346,7 @@ public class Nonogram {
 		}//END same col
 
 		//check for WINNING CONDITION at each mouse release: ****************
-		//NOTE: this has been replaced with the GUI submit button:
+		//NOTE: this has been enhanced with the GUI submit button:
         assignGroups(guess);
 		System.out.println(isGuessCorrect() ? "This is a correct " +
 				"solution" : "This is not a correct solution");
@@ -399,7 +377,7 @@ public class Nonogram {
 	public static void main(String[] args) {
 
 		//MAKE A NONOGRAM FROM A STRING:
-	/*	String pic =    "......X.XX\n" +
+		String pic =    "......X.XX\n" +
                         "........XX\n" +
                         ".......X..\n" +
                         ".........X\n" +
@@ -409,12 +387,13 @@ public class Nonogram {
                         ".XXXXXXXX.\n" +
                         "....X..X..\n" +
                         "...XX.XX..\n";
-	*/
-        String pic = "XX...X\n.X.XXX\n.X.XX.\n.XXX..\n.XXXX.\n...X..";
+
+        //String pic = "XX...X\n.X.XXX\n.X.XX.\n.XXX..\n.XXXX.\n...X..";
 
 		Nonogram testNono = new Nonogram(pic);
 
-		//TEST THE MEMBER VARIABLES FOR CORRECT VALUES:
+
+//********************  TESTS SECTION: ************************************
 		System.out.println("height = " + height);
 		System.out.println("width = " + width);
 		System.out.println("maxColGroups = " + maxColGroups);
@@ -450,7 +429,7 @@ public class Nonogram {
 		System.out.println(pic);
 */
 		System.out.println("\nTEST guess vs. targetSolution: ");
-		//INCORRECT GUESS TEST: **********************************************
+		//INCORRECT GUESS TEST:
 		//build an incorrect guess to test:
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
@@ -471,9 +450,9 @@ public class Nonogram {
 		//System.out.println("TEST isGuessCorrect: ");
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
-		//END incorrect guess test *******************************************
+		//END incorrect guess test
 
-		//CORRECT GUESS TEST: ************************************************
+		//CORRECT GUESS TEST:
 		//build a correct guess to test:
 		resetGuess();
 		for (int i = 0; i < height; i++) {
@@ -497,12 +476,12 @@ public class Nonogram {
 		//System.out.println("TEST isGuessCorrect: ");
 		System.out.println(isGuessCorrect() ? "You got a solution!" : "No " +
 				"solution yet.");
-        //END correct guess test ********************************************
+        //END correct guess test
+//**********************END TEST SECTION ************************************
 
 		//START THE GUI:
 		//user interface for the puzzle solution passed into it:
 		NonogramGUI gui = new NonogramGUI(testNono);
 
 	}//END main() method
-
 }//END class Nonogram
