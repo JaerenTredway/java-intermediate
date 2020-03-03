@@ -1,54 +1,68 @@
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 
 public class NonogramGUI implements ActionListener {
 
+	//MEMBER VARIABLES:
 	Nonogram puzzle;
 	NonogramPanel panel;
-	
-	public NonogramGUI(Nonogram puzzle) {
-		this.puzzle = puzzle;
-		this.panel = new NonogramPanel(puzzle);;
-		JFrame f = new JFrame("JAEREN'S NONOGRAM APP");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Container p = f.getContentPane();
+	JFrame f;
+	Container p;
+	protected JButton resetButton, submitButton;
+	JLabel winMessage;
 
-		JButton resetButton = new JButton("RESET");
+	//CONSTRUCTOR:
+	public NonogramGUI(Nonogram puzzle) {
+		//PUZZLE BOARD: *************************
+		this.puzzle = puzzle;
+		this.panel = new NonogramPanel(puzzle);
+		f = new JFrame("JAEREN'S NONOGRAM APP");
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		p = f.getContentPane();
+		//RESET BUTTON: *************************
+		resetButton = new JButton("Reset");
 		resetButton.addActionListener(this);
-		p.add(resetButton,BorderLayout.WEST);
-		p.add(panel,BorderLayout.CENTER);
+		p.add(resetButton, BorderLayout.WEST);
+		p.add(panel, BorderLayout.CENTER);
 		f.pack();
 		f.setVisible(true);
+		//SUBMIT BUTTON: ************************
+		submitButton = new JButton("SUBMIT");
+		submitButton.addActionListener(this);
+		p.add(submitButton, BorderLayout.EAST);
+		p.add(panel, BorderLayout.CENTER);
+		f.pack();
+		f.setVisible(true);
+		//WIN MESSAGE: **************************
+		winMessage = new JLabel("YOU WIN!");
+	}//END CONSTRUCTOR
 
-        JButton submitButton = new JButton("SUBMIT");
-        submitButton.addActionListener(this);
-        p.add(submitButton,BorderLayout.EAST);
-        p.add(panel,BorderLayout.CENTER);
-        f.pack();
-        f.setVisible(true);
-	}
-	
-    // handle reset button click event:
-    public void actionPerformed(ActionEvent e) {
-        System.out.println("Reset button pressed.");
-        puzzle.handleResetButtonClick();
-        panel.repaint();
-    }
+	//listens for clicks on either reset button or submit button:
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == resetButton) {
+			System.out.println("Reset button pressed");
+			puzzle.handleResetButtonClick();
+			panel.repaint();
+		} else if (e.getSource() == submitButton) {
+			System.out.println("Submit button pressed.");
+			puzzle.handleSubmitButtonClick();
+			panel.repaint();
+			//if guess is correct, display winning message pop-up:
+			if (puzzle.isGuessCorrect()) {
+				JOptionPane.showMessageDialog(
+						null,
+						"YOU WIN!",
+						"Message", JOptionPane.PLAIN_MESSAGE);
+			}
+		}
+	}//END actionPerformed()
 
-    //FIXME: needs to recognize submit button vs. reset button
-    // handle submit button click event:
- /*   public void actionPerformed(ActionEvent e) {
-        System.out.println("Submit button pressed.");
-        puzzle.handleSubmitButtonClick();
-        panel.repaint();
-    }
-*/
+	//MAIN METHOD:
 	public static void main (String[] args) {
 		String pic = "..XXX..\n.XX.XX.\nXX...XX\nX.....X\nXX...XX\n.XX.XX.\n..XXX..";
 		Nonogram nono = new Nonogram(pic);
 		NonogramGUI inst = new NonogramGUI(nono);
-	}
-	
-}
+	}//END main()
+
+}//END class NonogramGUI

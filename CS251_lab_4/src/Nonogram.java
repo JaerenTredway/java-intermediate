@@ -292,7 +292,8 @@ public class Nonogram {
 				pressedCol = j;
 			}
 		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_2) {
-			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
+			throw new ArrayIndexOutOfBoundsException("\nClick was not on " +
+                    "board.");
 		}
 	}
 
@@ -303,13 +304,14 @@ public class Nonogram {
 
 		//assign values to variables: **************************************
 		try {
-			if (i < height && j < width) {
+			if (i < height && i >= 0 && j < width && j >= 0) {
 				mouseReleaseAt[i][j] = guess[i][j];
 				releasedRow = i;
 				releasedCol = j;
 			}
 		} catch (ArrayIndexOutOfBoundsException arrIndxOOBEx_3) {
-			throw new ArrayIndexOutOfBoundsException("Click was not on board.");
+			throw new ArrayIndexOutOfBoundsException("\nClick was not on " +
+                    "board.");
 		}
 
 		//for press and release in SAME CELL: *******************************
@@ -351,10 +353,11 @@ public class Nonogram {
 			}
 		}//END same col
 
-		//check for WINNING CONDITION: **************************************
-		assignGroups(guess);
-		System.out.println(isGuessCorrect() ? "*****You have a CORRECT " +
-				"SOLUTION!*****" : "keep trying...");
+		//check for WINNING CONDITION at each mouse release: ****************
+		//NOTE: this has been replaced with the GUI submit button:
+        assignGroups(guess);
+		System.out.println(isGuessCorrect() ? "This is a CORRECT " +
+				"SOLUTION!" : "keep trying...");
 	}//END handleMouseReleaseAt()
 
 	//resets the painted cells to blank when reset button clicked:
@@ -370,8 +373,10 @@ public class Nonogram {
 	//checks for a winning solution when the submit button is clicked:
 	public void handleSubmitButtonClick( ) {
 		assignGroups(guess);
-		System.out.println(isGuessCorrect() ? "YOU WIN!" : "Keep " +
-						"trying...");
+        System.out.println("\nSubmission being analyzed:");
+		System.out.println(isGuessCorrect() ?
+                "You're guess is a match, YOU WIN!" :
+                "Keep trying...");
 	}
 
 	//****************END GUI section **************************************
