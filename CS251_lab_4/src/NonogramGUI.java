@@ -22,7 +22,7 @@ public class NonogramGUI implements ActionListener {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		p = f.getContentPane();
 		//RESET BUTTON: *************************
-		resetButton = new JButton("Reset");
+		resetButton = new JButton("RESET");
 		resetButton.addActionListener(this);
 		p.add(resetButton, BorderLayout.WEST);
 		p.add(panel, BorderLayout.CENTER);
