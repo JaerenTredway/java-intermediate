@@ -10,8 +10,8 @@ public class SortAndRemoveDuplicates {
 
     //CLASS VARIABLES:
     static String usage = "\nThis program takes a string of numbers separated" +
-            "by white space, sorts them, removes duplicates, and returns the " +
-            "sorted list.";
+            " by white space, sorts them, removes duplicates, and returns the" +
+            " sorted list.";
     static String[] stringNums;
     static int[] nums;
 
@@ -36,7 +36,7 @@ public class SortAndRemoveDuplicates {
         //ERROR HANDLING and GATHER INPUT:
         if (args.length != 1) {
             System.out.println(usage);
-            throw new IllegalArgumentException("Exactly one command line " +
+            throw new IllegalArgumentException("\nExactly one command line " +
                     "argument required.");
         }
 
@@ -48,7 +48,7 @@ public class SortAndRemoveDuplicates {
             }
         } catch (NumberFormatException nfe_1) {
             System.out.println(usage);
-            throw new IllegalArgumentException("A string of numbers " +
+            throw new IllegalArgumentException("\n\nA string of numbers " +
                     "separated by white spaces is required as the command " +
                     "line argument.");
         }//END gather input + error handling

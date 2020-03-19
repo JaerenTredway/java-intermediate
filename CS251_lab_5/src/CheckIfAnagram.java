@@ -15,9 +15,9 @@ public class CheckIfAnagram {
     public static void getInput () {
         Scanner scanner = new Scanner(System.in);
         System.out.println("ENTER string #1: ");
-        wordOne = scanner.nextLine();
+        wordOne = scanner.nextLine().toLowerCase();
         System.out.println("ENTER string #2: ");
-        wordTwo = scanner.nextLine();
+        wordTwo = scanner.nextLine().toLowerCase();
     }
 
     //returns true if the two args are anagrams, false otherwise:
