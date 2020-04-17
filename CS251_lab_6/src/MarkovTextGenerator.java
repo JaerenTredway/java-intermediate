@@ -25,18 +25,18 @@ public class MarkovTextGenerator {
 
     //this method returns an ArrayList with each word extracted from the .txt
     //file passed into it:
-    private static ArrayList<String> readTextFile (String[] uri) throws Exception {
+    private static ArrayList<String> readTextFile (String uri) throws Exception {
         //pick up and print out the file names (that were input from the command
         //line):
-        if (uri.length < 1) {
-            System.out.println("\n.txt filename(s) required as command line " +
-                    "argument(s)\n");
-        }
-        String filename = uri[0];
-        System.out.println(uri.length + " command line arguments:");
-        for (String input : uri) {
-            System.out.println(" " + input);
-        }
+//        if (uri.length < 1) {
+//            System.out.println("\n.txt filename(s) required as command line " +
+//                    "argument(s)\n");
+//        }
+        String filename = uri;
+        //System.out.println(uri.length + " command line arguments:");
+//        for (String input : uri) {
+//            System.out.println(" " + input);
+//        }
 
         //create 3 objects: a File, a FileReader, and a BufferedReader:
         //first declare them outside of try block:
@@ -99,9 +99,33 @@ public class MarkovTextGenerator {
         return words;
     }//END readTextFile()..........................................
 
-    public static void main (String[] args) throws Exception{
+    //this method creates an ArrayList of NGrams. Each NGram is a String with
+    // "n" words in it:
+    private static ArrayList<String> makeNGrams (int n,
+                                                ArrayList<String> words) {
+        ArrayList<String> NGrams = new ArrayList<>();
 
-        readTextFile(args);
+        for (int i = 0; i < words.size() - n; i++) {
+            String temp = "";
+            for (int j = 0; j < n; j++) {
+                temp += words.get(i+j);
+                temp += " ";
+            }
+            NGrams.add(temp);
+        }
+
+        return NGrams;
+    }
+
+    //main method collects the command line arguments,
+    //which are an int "n" that is the NGram size, and a .txt file URI:
+    public static void main (String[] args) throws Exception{
+        int n = Integer.parseInt(args[0]);
+        ArrayList<String> words = readTextFile(args[1]);
+        ArrayList<String> nGrams = makeNGrams(n, words);
+        for (int i = 0; i < 5; i++) {
+            System.out.println("NGram " + i + ": " + nGrams.get(i));
+        }
 
     }//END main()
 
